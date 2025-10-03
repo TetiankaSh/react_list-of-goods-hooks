@@ -39,6 +39,9 @@ const GoodList: React.FC<GoodListProps> = ({ goods }) => (
 export const App: React.FC = () => {
   const [goods, setGoods] = useState<string[]>(goodsFromServer);
   const [currentSort, setCurrentSort] = useState<SortType | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+
+  const original = goodsFromServer;
 
   const sortAlphabetically = (items: string[]): string[] => {
     return [...items].sort((a, b) => a.localeCompare(b));
@@ -54,27 +57,46 @@ export const App: React.FC = () => {
 
   const handleSort = (type: SortType) => {
     setCurrentSort(type);
+    let newGoods: string[];
+
     switch (type) {
       case SortType.ALPHABETICAL:
-        setGoods(sortAlphabetically(goods));
+        newGoods = sortAlphabetically(original);
         break;
       case SortType.LENGTH:
-        setGoods(sortByLength(goods));
+        newGoods = sortByLength(original);
         break;
       case SortType.REVERSE:
-        setGoods(reverse(goods));
+        newGoods = reverse(original);
         break;
       case SortType.RESET:
-        setGoods(goodsFromServer);
-        setCurrentSort(SortType.RESET);
+        newGoods = [...original];
         break;
       default:
+        newGoods = [...original];
         break;
     }
+
+    setGoods(newGoods);
   };
+
+  const displayedGoods = goods.filter(good =>
+    good.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
 
   return (
     <div className="section content">
+      <div className="field">
+        <div className="control">
+          <input
+            className="input"
+            type="text"
+            placeholder="Search goods..."
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+          />
+        </div>
+      </div>
       <div className="buttons">
         <button
           type="button"
@@ -103,17 +125,19 @@ export const App: React.FC = () => {
           {SortType.REVERSE}
         </button>
 
-        <button
-          type="button"
-          className={`button is-danger ${currentSort !== SortType.RESET ? 'is-light' : ''}`}
-          onClick={() => handleSort(SortType.RESET)}
-          aria-pressed={currentSort === SortType.RESET}
-        >
-          {SortType.RESET}
-        </button>
+        {currentSort !== null && (
+          <button
+            type="button"
+            className={`button is-danger ${currentSort !== SortType.RESET ? 'is-light' : ''}`}
+            onClick={() => handleSort(SortType.RESET)}
+            aria-pressed={currentSort === SortType.RESET}
+          >
+            {SortType.RESET}
+          </button>
+        )}
       </div>
 
-      <GoodList goods={goods} />
+      <GoodList goods={displayedGoods} />
     </div>
   );
 };
