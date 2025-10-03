@@ -66,7 +66,7 @@ export const App: React.FC = () => {
         break;
       case SortType.RESET:
         setGoods(goodsFromServer);
-        setCurrentSort(null);
+        setCurrentSort(SortType.RESET);
         break;
       default:
         break;
@@ -80,6 +80,7 @@ export const App: React.FC = () => {
           type="button"
           className={`button is-info ${currentSort !== SortType.ALPHABETICAL ? 'is-light' : ''}`}
           onClick={() => handleSort(SortType.ALPHABETICAL)}
+          aria-pressed={currentSort === SortType.ALPHABETICAL}
         >
           {SortType.ALPHABETICAL}
         </button>
@@ -88,6 +89,7 @@ export const App: React.FC = () => {
           type="button"
           className={`button is-success ${currentSort !== SortType.LENGTH ? 'is-light' : ''}`}
           onClick={() => handleSort(SortType.LENGTH)}
+          aria-pressed={currentSort === SortType.LENGTH}
         >
           {SortType.LENGTH}
         </button>
@@ -96,19 +98,19 @@ export const App: React.FC = () => {
           type="button"
           className={`button is-warning ${currentSort !== SortType.REVERSE ? 'is-light' : ''}`}
           onClick={() => handleSort(SortType.REVERSE)}
+          aria-pressed={currentSort === SortType.REVERSE}
         >
           {SortType.REVERSE}
         </button>
 
-        {currentSort !== null && (
-          <button
-            type="button"
-            className={`button is-danger ${currentSort !== SortType.RESET ? 'is-light' : ''}`}
-            onClick={() => handleSort(SortType.RESET)}
-          >
-            {SortType.RESET}
-          </button>
-        )}
+        <button
+          type="button"
+          className={`button is-danger ${currentSort !== SortType.RESET ? 'is-light' : ''}`}
+          onClick={() => handleSort(SortType.RESET)}
+          aria-pressed={currentSort === SortType.RESET}
+        >
+          {SortType.RESET}
+        </button>
       </div>
 
       <GoodList goods={goods} />
